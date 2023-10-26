@@ -27,6 +27,4 @@ replay_pid*
 **/mvnw.cmd
 **/target/
 .idea
-*.properties
-*.yml
-*.yaml
+/gulimall-product/src/main/resources/application.yml
