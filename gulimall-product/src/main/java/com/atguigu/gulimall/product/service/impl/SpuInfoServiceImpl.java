@@ -1,7 +1,7 @@
 package com.atguigu.gulimall.product.service.impl;
 
 
-import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.nacos.client.utils.StringUtils;
 import com.atguigu.common.to.SkuReductionTo;
 import com.atguigu.common.to.SpuBoundTo;
 import com.atguigu.common.utils.PageUtils;
@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +65,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         //1.spu基本 pms spu info
         SpuInfoEntity InfoEntity = new SpuInfoEntity();
 
-        BeanUtil.copyProperties(vo, InfoEntity);
+        BeanUtils.copyProperties(vo, InfoEntity);
         InfoEntity.setCreateTime(new Date());
         InfoEntity.setUpdateTime(new Date());
         this.saveBaseSpuInfo(InfoEntity);
@@ -99,7 +99,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         //5.spu积分 sms_spu_bounds
         Bounds bounds = vo.getBounds();
         SpuBoundTo spuBoundTo = new SpuBoundTo();
-        BeanUtil.copyProperties(bounds, spuBoundTo);
+        BeanUtils.copyProperties(bounds, spuBoundTo);
         spuBoundTo.setSpuId(InfoEntity.getId());
         R r = couponFeignService.saveSpuBounds(spuBoundTo);
         if (r.getCode() != 0) {
@@ -118,7 +118,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     }
                 }
                 SkuInfoEntity skuInfoEntity = new SkuInfoEntity();
-                BeanUtil.copyProperties(item, skuInfoEntity);
+                BeanUtils.copyProperties(item, skuInfoEntity);
                 skuInfoEntity.setBrandId(InfoEntity.getBrandId());
                 skuInfoEntity.setCatalogId(InfoEntity.getCatalogId());
                 skuInfoEntity.setSaleCount(0L);
@@ -144,7 +144,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 List<Attr> attr = item.getAttr();
                 List<SkuSaleAttrValueEntity> collected = attr.stream().map(a -> {
                     SkuSaleAttrValueEntity skuSaleAttrValueEntity = new SkuSaleAttrValueEntity();
-                    BeanUtil.copyProperties(a, skuSaleAttrValueEntity);
+                    BeanUtils.copyProperties(a, skuSaleAttrValueEntity);
                     skuSaleAttrValueEntity.setSkuId(skuId);
                     return skuSaleAttrValueEntity;
                 }).collect(Collectors.toList());
@@ -152,7 +152,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
                 //5.4 sku 优惠 sms sms_spu_ladder /sms_spu_full_reduction /sms_member_price /sms_spu_info
                 SkuReductionTo skuReductionTo = new SkuReductionTo();
-                BeanUtil.copyProperties(item, skuReductionTo);
+                BeanUtils.copyProperties(item, skuReductionTo);
                 skuReductionTo.setSkuId(skuId);
                 if (skuReductionTo.getFullCount() > 0 || skuReductionTo.getFullPrice().compareTo(new BigDecimal("0")) == 0) {
                     R r1 = couponFeignService.saveSkuReduction(skuReductionTo);
